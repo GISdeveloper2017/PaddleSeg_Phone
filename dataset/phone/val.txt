@@ -1,0 +1,10 @@
+JPEGImages/val/1.png Annotations/val/1.png
+JPEGImages/val/10.png Annotations/val/10.png
+JPEGImages/val/2.png Annotations/val/2.png
+JPEGImages/val/3.png Annotations/val/3.png
+JPEGImages/val/4.png Annotations/val/4.png
+JPEGImages/val/5.png Annotations/val/5.png
+JPEGImages/val/6.png Annotations/val/6.png
+JPEGImages/val/7.png Annotations/val/7.png
+JPEGImages/val/8.png Annotations/val/8.png
+JPEGImages/val/9.png Annotations/val/9.png

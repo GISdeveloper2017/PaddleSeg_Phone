@@ -1,0 +1,10 @@
+JPEGImages/test/1.png Annotations/test/1.png
+JPEGImages/test/10.png Annotations/test/10.png
+JPEGImages/test/2.png Annotations/test/2.png
+JPEGImages/test/3.png Annotations/test/3.png
+JPEGImages/test/4.png Annotations/test/4.png
+JPEGImages/test/5.png Annotations/test/5.png
+JPEGImages/test/6.png Annotations/test/6.png
+JPEGImages/test/7.png Annotations/test/7.png
+JPEGImages/test/8.png Annotations/test/8.png
+JPEGImages/test/9.png Annotations/test/9.png
