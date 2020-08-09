@@ -71,13 +71,13 @@ cd PaddleSeg
 pip install -r requirements.txt
 ```
 
-# **数据准备**
+## 数据准备
 
 - 解压数据集并移动至指定位置
 - 由于原始数据过大，不适合做示例演示，现有的数据已经过处理，如有需要可留言。
 
 
-# **关于标注数据**
+## 关于标注数据
 
 - **数据标注**
 1. PaddleSeg采用单通道的标注图片，每一种像素值代表一种类别，像素标注类别需要从0开始递增，例如0，1，2，3表示有4种类别。
@@ -102,7 +102,7 @@ python pdseg/tools/gray2pseudo_color.py <dir_or_file> <output_dir>
 - PaddleSeg/dataset/phone/Annotation_color为伪彩色标注
 - PaddleSeg/dataset/phone/Annotations为灰度标注
 
-# **关于训练阶段可视化**
+## 训练阶段可视化
 
 在训练的过程中可以使用 VisualDL 观察损失函数、准确率的变化曲线以及阶段性保存模型的预测结果。
 
@@ -110,19 +110,19 @@ python pdseg/tools/gray2pseudo_color.py <dir_or_file> <output_dir>
 
 替换后的地址：https://aistudio.baidu.com/bdvgpu/user/61916/698034/visualdl
 
-# **模型选择与参数配置**
+## 模型选择与参数配置
 
 1. 模型选择：根据自己的需求选择合适的模型进行训练。本文选择HRNet-W18作为训练模型
 1. 预训练模型：pretrained_model/download_model.py中提供了相应的预训练模型下载地址，可以根据自己的需求在其中寻找相应的预训练模型，如不存在，可以按照同样的格式添加对应的模型名称与下载地址。
 1. 参数配置：根据选择的模型修改相应的模型配置文件
-1. 配置校验：在开始训练和评估之前，对配置和数据进行一次校验，确保数据和配置是正确的。使用下述命令启动校验流程：
+1. 配置校验：在开始训练和评估之前，对配置和数据进行一次校验，确保数据和配置是正确的。使用下述命令下载预训练模型核启动校验流程：
 
 ```buildoutcfg
 python pretrained_model/download_model.py hrnet_w18_bn_cityscapes
 python pdseg/check.py --cfg ./configs/hrnet_optic.yaml
 ```
 
-##  **常用参数配置详细说明**
+## 常用参数配置详细说明
 
 `TRAIN.PRETRAINED_MODEL_DIR` 指定预训练模型路径
 
@@ -160,7 +160,7 @@ python pdseg/check.py --cfg ./configs/hrnet_optic.yaml
 
 - 当`AUG.AUG_METHOD`为rangscaling时，`EVAL_CROP_SIZE`的宽高应不小于缩放后图像中最大的宽和高。
 
-# **开始训练**
+## 开始训练
 
 运行PaddleSeg/pdseg/train.py 可以直接训练模型：
 
@@ -185,12 +185,12 @@ python pdseg/check.py --cfg ./configs/hrnet_optic.yaml
 |--vdl_log_dir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|VisualDL的日志路径|train|None||
 |--do_eval|是否在保存模型时进行效果评估   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|train|False||
 |--vis_dir|保存可视化图片的路径|vis|"visual"||
-# **模型评估**
+## 模型评估
 ```buildoutcfg
 python pdseg/train.py --use_gpu --cfg ./configs/hrnet_optic.yaml
 ```
 
-# **结果可视化**
+## 结果可视化
 ```buildoutcfg
 python pdseg/eval.py --use_gpu --cfg ./configs/hrnet_optic.yaml
 ```
