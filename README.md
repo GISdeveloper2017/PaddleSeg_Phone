@@ -194,3 +194,35 @@ python pdseg/train.py --use_gpu --cfg ./configs/hrnet_optic.yaml
 ```buildoutcfg
 python pdseg/eval.py --use_gpu --cfg ./configs/hrnet_optic.yaml
 ```
+
+
+## 选择MobileNet为DeepLabv3+的BackBone
+
+在DeepLabv3+中，提供了4种backbone类型，分别是xception_41、xception_65（默认）、xception_71和mobilenetv2， 通过`MODEL.DEEPLAB.BACKBONE`参数指定。其中xception系列精度较高，但速度慢，mobilenetv2在精度方面会有损失，但速度则要快很多。
+
+在精度与速度的选取方面，可通过设置DeplabV3+中是否保留aspp和decoder进行取舍。参数设置分别为：`MODEL.DEEPLAB.ENCODER_WITH_ASPP`，`MODEL.DEEPLAB.ENABLE_DECODER`，默认为True，当你更偏向于速度时，可设置为False.
+
+## 下载预训练模型
+考虑到检测的实时性等实际问题，选择MobileNet作为DeepLabv3+的BackBone，`MODEL.DEEPLAB.ENCODER_WITH_ASPP`，`MODEL.DEEPLAB.ENABLE_DECODER`，设置为False
+
+```buildoutcfg
+python pretrained_model/download_model.py deeplabv3p_mobilenetv2-1-0_bn_coco
+```
+
+## 配置校验
+
+```buildoutcfg
+python pdseg/train.py --use_gpu --cfg ./configs/deeplabv3p_mobilenetv2_cityscapes.yaml
+```
+
+## 模型评估
+
+```buildoutcfg
+python pdseg/eval.py --use_gpu --cfg ./configs/deeplabv3p_mobilenetv2_cityscapes.yaml
+```
+
+## 结果可视化
+
+```buildoutcfg
+python pdseg/vis.py --use_gpu --cfg ./configs/deeplabv3p_mobilenetv2_cityscapes.yaml
+```
