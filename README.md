@@ -1,29 +1,27 @@
-# PaddleSeg
+# 基于PaddleSeg的手机屏幕瑕疵检测
 
-[![Build Status](https://travis-ci.org/PaddlePaddle/PaddleSeg.svg?branch=master)](https://travis-ci.org/PaddlePaddle/PaddleSeg)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/github/release/PaddlePaddle/PaddleSeg.svg)](https://github.com/PaddlePaddle/PaddleSeg/releases)
-![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
-![support os](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-yellow.svg)
+手机屏幕瑕疵检测是对手机屏幕破损、划痕的位置、大小等问题的检测
 
-## 简介
+下图为手机屏幕划痕的图像与标注图像：
 
-PaddleSeg是基于[PaddlePaddle](https://www.paddlepaddle.org.cn)开发的端到端图像分割开发套件，覆盖了DeepLabv3+, U-Net, ICNet, PSPNet, HRNet, Fast-SCNN等主流分割网络。通过模块化的设计，以配置化方式驱动模型组合，帮助开发者更便捷地完成从训练到部署的全流程图像分割应用。
+<img src='https://ai-studio-static-online.cdn.bcebos.com/9e78af02edaf46318cce40969cee9658b77eb042de874a029fd838487dc581cc' width='40%' height='40%'>
 
-- [特点](#特点)
-- [安装](#安装)
-- [使用教程](#使用教程)
-  - [快速入门](#快速入门)
-  - [基础功能](#基础功能)
-  - [预测部署](#预测部署)
-  - [高级功能](#高级功能)
-- [在线体验](#在线体验)
-- [FAQ](#FAQ)
-- [交流与反馈](#交流与反馈)
-- [更新日志](#更新日志)
-- [贡献代码](#贡献代码)
+<img src='https://ai-studio-static-online.cdn.bcebos.com/c60fe6fae0b54cc7bb55b2e90681a9cee560280323ff46358f831d10a45839d3' width='38%' height='38%'>
 
-## 特点
+
+### 项目流程
+
+- 使用HRNet进行手机屏幕瑕疵检测，得到更精细化的识别效果进而计算瑕疵面积。
+- 使用数据增强手段，扩充次品的样本量，提升分割效果。
+- 使用针对类别不均衡问题效果的损失函数，我们应用dice_loss、bce_loss提高二分类分割精度。
+- 考虑到检测的实时性等实际问题，选择MobileNet作为DeepLabv3+的BackBone。
+
+
+## PaddleSeg
+
+PaddleSeg是基于PaddlePaddle开发的端到端图像分割开发套件，覆盖了DeepLabv3+, U-Net, ICNet, PSPNet, HRNet, Fast-SCNN等主流分割网络。通过模块化的设计，以配置化方式驱动模型组合，帮助开发者更便捷地完成从训练到部署的全流程图像分割应用
+
+###  特点
 
 - **丰富的数据增强**
 
@@ -44,6 +42,7 @@ PaddleSeg支持多进程I/O、多卡并行等训练加速策略，结合飞桨�
 - **产业实践案例**
 
 PaddleSeg提供丰富地产业实践案例，如[人像分割](./contrib/HumanSeg)、[工业表计检测](https://github.com/PaddlePaddle/PaddleSeg/tree/develop/contrib#%E5%B7%A5%E4%B8%9A%E8%A1%A8%E7%9B%98%E5%88%86%E5%89%B2)、[遥感分割](./contrib/RemoteSensing)、[人体解析](contrib/ACE2P)，[工业质检](https://aistudio.baidu.com/aistudio/projectdetail/184392)等产业实践案例，助力开发者更便捷地落地图像分割技术。
+
 
 ## 安装
 
@@ -72,135 +71,126 @@ cd PaddleSeg
 pip install -r requirements.txt
 ```
 
-## 使用教程
+# **数据准备**
 
-我们提供了一系列的使用教程，来说明如何使用PaddleSeg完成语义分割模型的训练、评估、部署。
-
-这一系列的文档被分为**快速入门**、**基础功能**、**预测部署**、**高级功能**四个部分，四个教程由浅至深地介绍PaddleSeg的设计思路和使用方法。
-
-### 快速入门
-
-* [PaddleSeg快速入门](./docs/usage.md)
-
-### 基础功能
-
-* [自定义数据的标注与准备](./docs/data_prepare.md)
-* [脚本使用和配置说明](./docs/config.md)
-* [数据和配置校验](./docs/check.md)
-* [分割模型介绍](./docs/models.md)
-* [预训练模型下载](./docs/model_zoo.md)
-* [DeepLabv3+模型使用教程](./tutorial/finetune_deeplabv3plus.md)
-* [U-Net模型使用教程](./tutorial/finetune_unet.md)
-* [ICNet模型使用教程](./tutorial/finetune_icnet.md)
-* [PSPNet模型使用教程](./tutorial/finetune_pspnet.md)
-* [HRNet模型使用教程](./tutorial/finetune_hrnet.md)
-* [Fast-SCNN模型使用教程](./tutorial/finetune_fast_scnn.md)
-
-### 预测部署
-
-* [模型导出](./docs/model_export.md)
-* [Python预测](./deploy/python/)
-* [C++预测](./deploy/cpp/)
-* [Paddle-Lite移动端预测部署](./deploy/lite/)
+- 解压数据集并移动至指定位置
+- 由于原始数据过大，不适合做示例演示，现有的数据已经过处理，如有需要可留言。
 
 
-### 高级功能
+# **关于标注数据**
 
-* [PaddleSeg的数据增强](./docs/data_aug.md)
-* [PaddleSeg的loss选择](./docs/loss_select.md)
-* [PaddleSeg产业实践](./contrib)
-* [多进程训练和混合精度训练](./docs/multiple_gpus_train_and_mixed_precision_train.md)
-* 使用PaddleSlim进行分割模型压缩([量化](./slim/quantization/README.md), [蒸馏](./slim/distillation/README.md), [剪枝](./slim/prune/README.md), [搜索](./slim/nas/README.md))
-## 在线体验
+- **数据标注**
+1. PaddleSeg采用单通道的标注图片，每一种像素值代表一种类别，像素标注类别需要从0开始递增，例如0，1，2，3表示有4种类别。
+1. NOTE: 标注图像请使用PNG无损压缩格式的图片。标注类别最多为256类
+1. PaddleSeg支持灰度标注同时也支持伪彩色标注
 
-我们在AI Studio平台上提供了在线体验的教程，欢迎体验：
+- **标注转换**
 
-|在线教程|链接|
+PaddleSeg支持灰度标注转换为伪彩色标注，如需转换成伪彩色标注图，可使用PaddleSeg自带的的转换工具：
+
+```buildoutcfg
+python pdseg/tools/gray2pseudo_color.py <dir_or_file> <output_dir>
+```
+
+|参数|用途|
 |-|-|
-|快速开始|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/100798)|
-|U-Net图像分割|[点击体验](https://aistudio.baidu.com/aistudio/projectDetail/102889)|
-|DeepLabv3+图像分割|[点击体验](https://aistudio.baidu.com/aistudio/projectDetail/226703)|
-|工业质检（零件瑕疵检测）|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/184392)|
-|人像分割|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/475345)|
-|PaddleSeg特色垂类模型|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/226710)|
+|dir_or_file|指定灰度标注所在目录|
+|output_dir|彩色标注图片的输出目录|
 
-## FAQ
 
-#### Q: 安装requirements.txt指定的依赖包时，部分包提示找不到？
+本项目中包含灰度标注与伪彩色标注两种标注：
+- PaddleSeg/dataset/phone/Annotation_color为伪彩色标注
+- PaddleSeg/dataset/phone/Annotations为灰度标注
 
-A: 可能是pip源的问题，这种情况下建议切换为官方源，或者通过`pip install -r requirements.txt -i `指定其他源地址。
+# **关于训练阶段可视化**
 
-#### Q:图像分割的数据增强如何配置，Unpadding, StepScaling, RangeScaling的原理是什么？
+在训练的过程中可以使用 VisualDL 观察损失函数、准确率的变化曲线以及阶段性保存模型的预测结果。
 
-A: 更详细数据增强文档可以参考[数据增强](./docs/data_aug.md)
+本网页的地址：https://aistudio.baidu.com/bdvgpu/user/61916/698034/notebooks/698034.ipynb **将后续notebooks及其后面的地址删除掉，替换为visualdl**
 
-#### Q: 训练时因为某些原因中断了，如何恢复训练？
+替换后的地址：https://aistudio.baidu.com/bdvgpu/user/61916/698034/visualdl
 
-A: 启动训练脚本时通过命令行覆盖TRAIN.RESUME_MODEL_DIR配置为模型checkpoint目录即可, 以下代码示例第100轮重新恢复训练：
+# **模型选择与参数配置**
+
+1. 模型选择：根据自己的需求选择合适的模型进行训练。本文选择HRNet-W18作为训练模型
+1. 预训练模型：pretrained_model/download_model.py中提供了相应的预训练模型下载地址，可以根据自己的需求在其中寻找相应的预训练模型，如不存在，可以按照同样的格式添加对应的模型名称与下载地址。
+1. 参数配置：根据选择的模型修改相应的模型配置文件
+1. 配置校验：在开始训练和评估之前，对配置和数据进行一次校验，确保数据和配置是正确的。使用下述命令启动校验流程：
+
+```buildoutcfg
+python pretrained_model/download_model.py hrnet_w18_bn_cityscapes
+python pdseg/check.py --cfg ./configs/hrnet_optic.yaml
 ```
-python pdseg/train.py --cfg xxx.yaml TRAIN.RESUME_MODEL_DIR /PATH/TO/MODEL_CKPT/100
+
+##  **常用参数配置详细说明**
+
+`TRAIN.PRETRAINED_MODEL_DIR` 指定预训练模型路径
+
+`MODEL.DEFAULT_NORM_TYPE` 指定norm的类型，此处提供bn和gn（默认）两种选择，分别指batch norm和group norm。
+
+`BATCH_SIZE` 批处理大小
+
+`--use_mpio` 是否开启多进程
+
+`DATASET.NUM_CLASSES` 类别数（包括背景类别）
+
+`TRAIN_CROP_SIZE` 训练时图像裁剪尺寸（宽，高）
+
+`TRAIN.MODEL_SAVE_DIR` 模型保存路径
+
+`TRAIN.SYNC_BATCH_NORM` 是否使用多卡间同步BatchNorm均值和方差，默认False
+
+`SOLVER.LR` 初始学习率
+
+`SOLVER.NUM_EPOCHS` 训练epoch数，正整数
+
+`SOLVER.LR_POLICY` 学习率下降方法, 选项为poly、piecewise和cosine
+
+`SOLVER.OPTIMIZER` 优化算法, 选项为sgd和adam
+
+`MODEL.DEEPLAB.OUTPUT_STRIDE` DeepLabv3+网络中output stride设置，取值为16（默认）或8。取值为16时，网络规模较小，速度较快，当取8时，网络规模较大，精度较高，可根据实际需求进行选取。
+
+`TEST.TEST_MODEL` 为测试模型路径
+
+`EVAL_CROP_SIZE` 验证时图像裁剪尺寸（宽，高），具体的取值要求分如下情况：
+
+- 当`AUG.AUG_METHOD`为unpadding时，`EVAL_CROP_SIZE`的宽高应不小于`AUG.FIX_RESIZE_SIZE`的宽和高。
+
+- 当`AUG.AUG_METHOD`为stepscaling时，`EVAL_CROP_SIZE`的宽高应不小于原图中最大的宽和高。
+
+- 当`AUG.AUG_METHOD`为rangscaling时，`EVAL_CROP_SIZE`的宽高应不小于缩放后图像中最大的宽和高。
+
+# **开始训练**
+
+运行PaddleSeg/pdseg/train.py 可以直接训练模型：
+
+* --cfg是yaml文件配置参数，许多参数都在相应的yaml文件中进行了配置，在configs有一些公开数据集的yaml文件。
+* --use_gpu是指开启GPU进行训练，若是在gpu上运行，请开启参数--use_gpu。
+
+**需要指出的是，关于参数的文件有两个，一个是在pdseg/utils/configs.py文件中，一个是通过--cfg传入的yaml文件，其中yaml文件参数配置优先级大于config.py文件。configs.py中对各个参数的含义做了明确的说明**
+
+如果想要改变configs.py参数的配置，一种做法是设计一个yaml文件传给--cfg，另一种做法是在命令行直接对相应参数赋值，前者适合需要长期作出改变的情况，如更换数据集，后者适合临时对一些参数进行更改。
+## 命令行FLAGS
+
+[PaddleSeg各参数设置说明文档](https://github.com/PaddlePaddle/PaddleSeg/blob/release/v0.5.0/docs/config.md#%E5%91%BD%E4%BB%A4%E8%A1%8Cflags)
+
+|FLAG|用途|支持脚本|默认值|备注|
+|-|-|-|-|-|
+|--cfg|配置文件路径|ALL|None||
+|--use_gpu|是否使用GPU进行训练|train/eval/vis|False||
+|--use_mpio|是否使用多进程进行IO处理|train/eval|False|打开该开关会占用一定量的CPU内存，但是可以提高训练速度。</br> **NOTE：** windows平台下不支持该功能, 建议使用自定义数据初次训练时不打开，打开会导致数据读取异常不可见。 |
+|--use_vdl|是否使用VisualDL记录训练数据|train|False||
+|--log_steps|训练日志的打印周期（单位为step）|train|10||
+|--debug|是否打印debug信息|train|False|IOU等指标涉及到混淆矩阵的计算，会降低训练速度|
+|--vdl_log_dir &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|VisualDL的日志路径|train|None||
+|--do_eval|是否在保存模型时进行效果评估   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|train|False||
+|--vis_dir|保存可视化图片的路径|vis|"visual"||
+# **模型评估**
+```buildoutcfg
+python pdseg/train.py --use_gpu --cfg ./configs/hrnet_optic.yaml
 ```
 
-#### Q: 预测时图片过大，导致显存不足如何处理？
-
-A: 降低Batch size，使用Group Norm策略；请注意训练过程中当`DEFAULT_NORM_TYPE`选择`bn`时，为了Batch Norm计算稳定性，batch size需要满足>=2
-
-
-## 交流与反馈
-* 欢迎您通过[Github Issues](https://github.com/PaddlePaddle/PaddleSeg/issues)来提交问题、报告与建议
-* 微信公众号：飞桨PaddlePaddle
-* QQ群: 703252161
-
-<p align="center"><img width="200" height="200"  src="https://user-images.githubusercontent.com/45189361/64117959-1969de80-cdc9-11e9-84f7-e1c2849a004c.jpeg"/>&#8194;&#8194;&#8194;&#8194;&#8194;<img width="200" height="200" margin="500" src="./docs/imgs/qq_group2.png"/></p>
-<p align="center">  &#8194;&#8194;&#8194;微信公众号&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;官方技术交流QQ群</p>
-
-## 更新日志
-* 2020.05.12
-
-  **`v0.5.0`**
-  * 全面升级[HumanSeg人像分割模型](./contrib/HumanSeg)，新增超轻量级人像分割模型HumanSeg-lite支持移动端实时人像分割处理，并提供基于光流的视频分割后处理提升分割流畅性。
-  * 新增[气象遥感分割方案](./contrib/RemoteSensing)，支持积雪识别、云检测等气象遥感场景。
-  * 新增[Lovasz Loss](docs/lovasz_loss.md)，解决数据类别不均衡问题。
-  * 使用VisualDL 2.0作为训练可视化工具
-
-* 2020.02.25
-
-  **`v0.4.0`**
-  * 新增适用于实时场景且不需要预训练模型的分割网络Fast-SCNN，提供基于Cityscapes的[预训练模型](./docs/model_zoo.md)1个
-  * 新增LaneNet车道线检测网络，提供[预训练模型](https://github.com/PaddlePaddle/PaddleSeg/tree/release/v0.4.0/contrib/LaneNet#%E4%B8%83-%E5%8F%AF%E8%A7%86%E5%8C%96)一个
-  * 新增基于PaddleSlim的分割库压缩策略([量化](./slim/quantization/README.md), [蒸馏](./slim/distillation/README.md), [剪枝](./slim/prune/README.md), [搜索](./slim/nas/README.md))
-
-
-* 2019.12.15
-
-  **`v0.3.0`**
-  * 新增HRNet分割网络，提供基于cityscapes和ImageNet的[预训练模型](./docs/model_zoo.md)8个
-  * 支持使用[伪彩色标签](./docs/data_prepare.md#%E7%81%B0%E5%BA%A6%E6%A0%87%E6%B3%A8vs%E4%BC%AA%E5%BD%A9%E8%89%B2%E6%A0%87%E6%B3%A8)进行训练/评估/预测，提升训练体验，并提供将灰度标注图转为伪彩色标注图的脚本
-  * 新增[学习率warmup](./docs/configs/solver_group.md#lr_warmup)功能，支持与不同的学习率Decay策略配合使用
-  * 新增图像归一化操作的GPU化实现，进一步提升预测速度。
-  * 新增Python部署方案，更低成本完成工业级部署。
-  * 新增Paddle-Lite移动端部署方案，支持人像分割模型的移动端部署。
-  * 新增不同分割模型的预测[性能数据Benchmark](./deploy/python/docs/PaddleSeg_Infer_Benchmark.md), 便于开发者提供模型选型性能参考。
-
-
-* 2019.11.04
-
-  **`v0.2.0`**
-  * 新增PSPNet分割网络，提供基于COCO和cityscapes数据集的[预训练模型](./docs/model_zoo.md)4个。
-  * 新增Dice Loss、BCE Loss以及组合Loss配置，支持样本不均衡场景下的[模型优化](./docs/loss_select.md)。
-  * 支持[FP16混合精度训练](./docs/multiple_gpus_train_and_mixed_precision_train.md)以及动态Loss Scaling，在不损耗精度的情况下，训练速度提升30%+。
-  * 支持[PaddlePaddle多卡多进程训练](./docs/multiple_gpus_train_and_mixed_precision_train.md)，多卡训练时训练速度提升15%+。
-  * 发布基于UNet的[工业标记表盘分割模型](./contrib#%E5%B7%A5%E4%B8%9A%E7%94%A8%E8%A1%A8%E5%88%86%E5%89%B2)。
-
-* 2019.09.10
-
-  **`v0.1.0`**
-  * PaddleSeg分割库初始版本发布，包含DeepLabv3+, U-Net, ICNet三类分割模型, 其中DeepLabv3+支持Xception, MobileNet v2两种可调节的骨干网络。
-  * CVPR19 LIP人体部件分割比赛冠军预测模型发布[ACE2P](./contrib/ACE2P)。
-  * 预置基于DeepLabv3+网络的[人像分割](./contrib/HumanSeg/)和[车道线分割](./contrib/RoadLine)预测模型发布。
-
-</br>
-
-## 贡献代码
-
-我们非常欢迎您为PaddleSeg贡献代码或者提供使用建议。如果您可以修复某个issue或者增加一个新功能，欢迎给我们提交Pull Requests.
+# **结果可视化**
+```buildoutcfg
+python pdseg/eval.py --use_gpu --cfg ./configs/hrnet_optic.yaml
+```
